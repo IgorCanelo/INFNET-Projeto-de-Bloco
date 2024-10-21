@@ -1,0 +1,8 @@
+streamlit
+pandas
+seaborn
+matplotlib
+plotly
+beautifulsoup4
+fastapi
+uvicorn
