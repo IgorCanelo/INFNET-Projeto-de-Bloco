@@ -6,3 +6,7 @@ plotly
 beautifulsoup4
 fastapi
 uvicorn
+scikit-learn
+openpyxl
+yfinance
+openai
