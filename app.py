@@ -20,6 +20,14 @@ from typing import List, Union, TypedDict
 from pydantic import BaseModel, ValidationError
 from typing import List, Optional
 from dotenv import load_dotenv
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from PyPDF2 import PdfReader
 
 load_dotenv('env/config.txt')
 api_key = os.getenv('API_KEY')
@@ -27,39 +35,183 @@ api_key = os.getenv('API_KEY')
 
 def inicial():
 
-    st.title("Recomendação de FII's")
-    st.markdown("""
-## Objetivos do Projeto
+    st.markdown("<h1 style='text-align: center;'>💰 Recomendação de FII's 💰</h1>", unsafe_allow_html=True)
 
-- **Desenvolver** um modelo de recomendação de Fundos de Investimento Imobiliário (FII's).
-- **Auxiliar** investidores com pouca ou nenhuma experiência.
-- **Melhorar** os ganhos financeiros e otimizar o tempo dos usuários.
-""")
     st.markdown("""
-### Inspiração
+    <hr>
+    <h2>🎯 Objetivos do Projeto</h2>
+    <ul>
+        <li><b>Desenvolver</b> um modelo de recomendação de Fundos de Investimento Imobiliário (FII's).</li>
+        <li><b>Auxiliar</b> investidores com pouca ou nenhuma experiência.</li>
+        <li><b>Melhorar</b> os ganhos financeiros e otimizar o tempo dos usuários.</li>
+    </ul>
+    <hr>
+    """, unsafe_allow_html=True)
 
-Para mais informações e inspiração, visite o [Ranking de FIIs do Funds Explorer](https://www.fundsexplorer.com.br/ranking).
-""")
+    st.markdown("""
+    <h2>🌟 Inspiração</h2>
+    <p>Para mais informações e inspiração, visite o <a href="https://www.fundsexplorer.com.br/ranking" target="_blank" style="color: #4CAF50; text-decoration: none;"><b>Ranking de FIIs do Funds Explorer</b></a>.</p>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<hr>", unsafe_allow_html=True)
+
 
 
 def data():
-    st.subheader("Amostra dos dados que serão utilizados no modelo:")
-    st.write("Dataset de 2024")
+    st.markdown(
+        """
+        <h2>📊 Amostra dos Dados Utilizados no Modelo</h2>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <p style='color: #333; font-size: 16px;'>
+        Aqui está uma prévia do <b>dataset de 2024</b> que será utilizado para o modelo de recomendação de FIIs.
+        </p>
+        """, unsafe_allow_html=True
+    )
     df_2024 = pd.read_csv("data/inf_mensal_fii_2024/inf_mensal_fii_complemento_2024.csv", delimiter=";", encoding="ISO-8859-1")
     st.dataframe(df_2024)
 
 
 
-def analise_exploratoria_v1():
-    st.write("Os dados obtidos são da CVM e estão divididos por ano e em cada ano possuímos três datasets, onde são informações pertinentes a ativo vs passivo, complemento e informações gerais dos fundos.")
-    st.markdown("""
-## Passos da análise exploratória
+import streamlit as st
 
-- **Concatenação** dos datasets de todos os anos, resultando em apenas 3 datasets finais.
-- **Análise de ativos e passivos** Uma visualização para identificar quais fundos possuem mais direitos do que obrigações.
-- **Segmento dos FII's** que mais possuem atuação no Brasil.
-- **Dividend Yield** comparação anual.
-""")
+def analise_exploratoria_v1():
+
+    st.markdown(
+        """
+        <h3>🔍 Obtenção dos Dados</h3>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <p style='font-size: 16px; color: #333; line-height: 1.6;'>
+        Os dados utilizados são provenientes da <b>CVM</b>, organizados por ano. Para cada ano, temos três datasets:
+        <ul>
+            <li>Informações sobre <b>ativo vs passivo</b></li>
+            <li>Complemento de dados</li>
+            <li>Informações gerais dos fundos</li>
+        </ul>
+        </p>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown("<hr>", unsafe_allow_html=True)
+
+    st.markdown(
+        """
+        <h2>📂 Passo a passo para insights obtidos</h2>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <ul style='font-size: 16px; line-height: 1.8;'>
+            <li>🛠️ <b>Concatenação:</b> Combinação dos datasets de todos os anos, resultando em apenas 3 datasets finais.</li>
+            <li>📊 <b>Análise de ativos e passivos:</b> Visualizações para identificar quais fundos possuem mais direitos do que obrigações.</li>
+            <li>🌎 <b>Segmento dos FII's:</b> Identificação dos fundos com maior atuação no Brasil.</li>
+            <li>📈 <b>Dividend Yield:</b> Comparação anual dos dividendos distribuídos.</li>
+        </ul>
+        """, unsafe_allow_html=True
+    )
+
+
+def explicacao():
+
+    st.markdown(
+        """
+        <h3>📘 Explicação de Termos Relacionados a FIIs</h3>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown("""
+    Este espaço é destinado a explicar as principais **nomenclaturas** normalmente utilizadas no contexto de **investimentos em fundos imobiliários (FIIs)**.  
+    Vamos descomplicar os termos mais usados e auxiliar no entendimento do mercado!
+    """)
+
+    st.write("")
+    st.write("")
+    st.write("")
+
+    st.subheader("🏢 Termos Relacionados aos Fundos Imobiliários (FIIs)")
+    st.markdown("""
+    - **Rendimentos**: Pagamentos periódicos feitos aos cotistas (similar aos dividendos).
+    - **Dividend Yield (DY)**: Percentual do rendimento pago em relação ao preço da cota.
+    - **Preço sobre Valor Patrimonial (P/VP)**: Relação entre o preço da cota e o valor patrimonial do fundo.
+    - **Vacância**: Porcentagem de imóveis ou áreas que estão desocupadas no portfólio do FII.
+    - **Cap Rate**: Taxa de capitalização, usada para avaliar a rentabilidade de um imóvel.
+    - **Taxa de Administração**: Taxa paga ao gestor do fundo para sua administração.
+    - **Gestor**: Profissional ou empresa responsável pela gestão do fundo.
+    - **Ativo-alvo**: Tipo de imóvel ou investimento no qual o fundo aplica recursos (shoppings, galpões logísticos, lajes corporativas, etc.).
+    - **FII de Papel**: Fundos que investem em títulos como CRIs (Certificados de Recebíveis Imobiliários).
+    - **FII de Tijolo**: Fundos que investem diretamente em imóveis físicos.
+    - **CRI (Certificado de Recebíveis Imobiliários)**: Título de renda fixa lastreado em créditos do setor imobiliário.
+    """)
+
+    st.write("")
+    st.write("")
+    st.write("")
+    st.subheader("📊 Indicadores de Desempenho")
+    st.markdown("""
+    - **Ativos**: É tudo o que gera ou pode gerar valor para empresa, ou seja, recursos disponíveis.
+    - **Passivos**: São as obrigações ou dívidas que precisam ser pagas no futuro, ou seja, são as obrigações da empresa.
+    - **Liquidez**: Facilidade de comprar ou vender cotas no mercado.
+    - **Rentabilidade**: Retorno obtido em relação ao investimento inicial.
+    - **Volatilidade**: Medida de variação do preço das cotas ao longo do tempo.
+    - **Patrimônio Líquido (PL)**: Valor total dos ativos do fundo menos os passivos.
+    - **Resultado por Cota (R$/cota)**: Lucro distribuível dividido pelo número de cotas.
+    - **TIR (Taxa Interna de Retorno)**: Mede a rentabilidade esperada do fundo.
+    - **VPA (Valor Patrimonial por Ação)**: Valor patrimonial dividido pelo número de cotas.
+    """)
+
+    st.write("")
+    st.write("")
+    st.write("")
+    st.subheader("💼 Termos Gerais do Mercado de Investimentos")
+    st.markdown("""
+    - **Renda Fixa**: Investimentos com retorno previsível, como títulos públicos ou CRIs.
+    - **Renda Variável**: Investimentos cujo retorno não é garantido, como FIIs ou ações.
+    - **Diversificação**: Estratégia para reduzir riscos alocando recursos em diferentes ativos.
+    - **Índice de Referência (Benchmark)**: Indicador usado para medir o desempenho, como o IFIX para FIIs.
+    - **IFIX**: Índice de Fundos Imobiliários da Bolsa Brasileira (B3).
+    - **Alavancagem**: Uso de capital de terceiros para aumentar o potencial de retorno (ou risco).
+    - **Tesouro Direto**: Programa de investimento em títulos públicos do governo.
+    """)
+
+    st.write("")
+    st.write("")
+    st.write("")
+    st.subheader("📜 Termos Jurídicos e Tributários")
+    st.markdown("""
+    - **Isenção de IR**: Fundos imobiliários têm rendimentos isentos para pessoas físicas, desde que atendam a critérios legais.
+    - **Proventos**: Distribuições financeiras aos cotistas (rendimento ou amortização).
+    - **Amortização**: Devolução de parte do capital investido pelo cotista.
+    - **Taxa de Custódia**: Cobrança pelo armazenamento das cotas em instituições financeiras.
+    """)
+
+    st.write("")
+    st.write("")
+    st.write("")
+    st.subheader("📂 Tipos de Fundos Imobiliários")
+    st.markdown("""
+    - **Híbridos**: Fundos que combinam diferentes tipos de ativos (papéis + tijolos).
+    - **Monoativo**: Fundos que possuem apenas um imóvel.
+    - **Multimercado**: Fundos que diversificam investimentos em setores e regiões distintas.
+    """)
+
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
+    st.markdown("""
+    🌟 **Agora você está preparado(a) para entender os termos mais usados no mundo dos FIIs!**
+    """)
+
+
+
     
 @st.cache_data
 def concatenacao_at_pas():
@@ -408,15 +560,14 @@ def atualizar_dados_scrapping():
             excluir_arquivo_zip(arquivo_zip)
 
     
-    st.subheader("Clique no botão abaixo para atualizar todo o conjunto de dados do modelo")
     if st.button("Atualizar Conjunto de Dados"):
         atualizar_dados()
-        st.write("Conjunto de Dados Atualizado:")
+        st.write("Conjunto de Dados Atualizado")
     
 
 def recomendacao_inicial():
     st.markdown("""
-## Quais são os principais perfis de investidores?
+Quais são os principais perfis de investidores?
 
 - **Conservador** - Evita riscos e prefere investimentos com menor retorno e maior segurança.
 - **Moderado** - Aceita mais riscos do que o conservador, mas volta a investir em opções mais seguras em momentos de instabilidade.
@@ -425,31 +576,54 @@ def recomendacao_inicial():
     opcoes = ['Conservador', 'Moderado', 'Arrojado']
     perfil_investidor = st.selectbox("Selecione o seu perfil de investidor", opcoes)
     st.write(f'Você selecionou: {perfil_investidor}')
-    st.session_state["investidor"] = perfil_investidor
+    st.session_state["investidor_conser_mod_arroj"] = perfil_investidor
     return perfil_investidor
 
 def endpoints_api():
-    st.subheader("Endpoints utilizados para obter informações via API")
-    st.write("Para realizar testes e se familiarizar com os endpoints da API recomendamos acessar o Swagger no endpoint abaixo:")
-    st.write("http://127.0.0.1:8000/docs#/")
-    st.subheader("POST - Conversar com especialista virtual focado em FII's")
-    st.write("Esse endpoint é utilizado para obter uma conversação com assistente financeiro virtual para tirar dúvidas pertinentes a FII's")
-    st.write("http://127.0.0.1:8000/chat/especialista_fii")
-    st.subheader("GET - Obter as informações de ativos e passivos por CNPJ")
-    st.write("Esse endpoint trás todas as informações de ativos e passivos do conjunto de dados desde 2020 ate a data mais recente, via CNPJ como parâmetro da requisição com apenas números.")
-    st.write("http://127.0.0.1:8000/dataset/ativos_passivos/{cnpj}")
-    st.subheader("GET - Obter as informações de complemento por CNPJ")
-    st.write("Esse endpoint trás todas as informações de complemento do conjunto de dados desde 2020 ate a data mais recente, via CNPJ como parâmetro da requisição com apenas números.")
-    st.write("http://127.0.0.1:8000/dataset/complemento/{cnpj}")
-    st.subheader("GET - Obter as informações gerais por CNPJ")
-    st.write("Esse endpoint trás todas as informações gerais do conjunto de dados desde 2020 ate a data mais recente, via CNPJ como parâmetro da requisição com apenas números.")
-    st.write("http://127.0.0.1:8000/dataset/geral/{cnpj}")
+    st.markdown("<h2>🔌 Endpoints Utilizados para Obter Informações via API</h2>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True) 
+    
+    st.markdown("""
+    ## Teste os Endpoints da API
+    Para realizar testes e se familiarizar com os endpoints da API, recomendamos acessar o Swagger no endpoint abaixo:
+    """)
+    st.markdown("<h3 style='text-align: center; color: #28A745;'>🔗 Acessar Swagger - Testar Endpoints http://127.0.0.1:8000/docs#/</h3>", unsafe_allow_html=True)
+    
+    # Adicionando espaçamento
+    st.markdown("<hr>", unsafe_allow_html=True) 
+    
+    # POST - Assistente Virtual
+    st.subheader("🔌 **POST - Conversar com especialista virtual focado em FII's**")
+    st.write("Este endpoint é utilizado para obter uma conversação com o assistente financeiro virtual para tirar dúvidas sobre FII's.")
+    st.markdown("<h4 style='color: #FF5722;'>Endpoint:</h4>", unsafe_allow_html=True)
+    st.markdown("<h5 style='color: #FF5722;'>http://127.0.0.1:8000/chat/especialista_fii</h5>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True) 
+
+    # GET - Ativos e Passivos
+    st.subheader("🔌 **GET - Obter as informações de ativos e passivos por CNPJ**")
+    st.write("Esse endpoint retorna todas as informações de ativos e passivos do conjunto de dados desde 2020 até a data mais recente, com o CNPJ como parâmetro.")
+    st.markdown("<h4 style='color: #FF5722;'>Endpoint:</h4>", unsafe_allow_html=True)
+    st.markdown("<h5 style='color: #FF5722;'>http://127.0.0.1:8000/dataset/ativos_passivos/{cnpj}</h5>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True) 
+
+    # GET - Complemento
+    st.subheader("🔌 **GET - Obter as informações de complemento por CNPJ**")
+    st.write("Esse endpoint retorna todas as informações de complemento do conjunto de dados desde 2020 até a data mais recente, com o CNPJ como parâmetro.")
+    st.markdown("<h4 style='color: #FF5722;'>Endpoint:</h4>", unsafe_allow_html=True)
+    st.markdown("<h5 style='color: #FF5722;'>http://127.0.0.1:8000/dataset/complemento/{cnpj}</h5>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True) 
+
+    # GET - Informações Gerais
+    st.subheader("🔌 **GET - Obter as informações gerais por CNPJ**")
+    st.write("Esse endpoint retorna todas as informações gerais do conjunto de dados desde 2020 até a data mais recente, com o CNPJ como parâmetro.")
+    st.markdown("<h4 style='color: #FF5722;'>Endpoint:</h4>", unsafe_allow_html=True)
+    st.markdown("<h5 style='color: #FF5722;'>http://127.0.0.1:8000/dataset/geral/{cnpj}</h5>", unsafe_allow_html=True)
+    
+
 
 
 def recomendacao_inicial_investidor():
     st.markdown("""
-## Como você se classifica em relação a investimento em Fundos Imobiliários (FIIs)?
-
 - **Iniciante** - Tenho pouco ou nenhum conhecimento sobre investimentos em FIIs.
 - **Intermediário** - Já investi em FIIs, mas ainda tenho poucos conhecimentos sobre o tema.
 - **Avançado** - Conheço o mercado de FIIs, possuo capital alocado e acompanho o desempenho regularmente.
@@ -457,26 +631,26 @@ def recomendacao_inicial_investidor():
     opcoes = ['Iniciante', 'Intermediário', 'Avançado']
     investidor = st.selectbox("Selecione o seu nível de conhecimento em FIIs", opcoes)
     st.write(f'Você selecionou: {investidor}')
-    st.session_state["segmentos"] = investidor
+    st.session_state["investidor_inic_med_avan"] = investidor
     return investidor
 
 def valor_disposto_investir():
 
     st.markdown("""
-## Qual o valor que você tem em mente para investir por cota?
+Qual o valor que você tem em mente para investir por cota?
 """)
 
     valor_investido = st.selectbox(
-        "Qual o valor que você tem em mente para investir por cota?",
+        "Selecione as opções:",
         ["R$0,00 a R$90,00", "R$91,00 a R$120,00", "Acima de R$121,00", "Não possuo valor pré-estabelecido"]
     )
-    st.session_state["segmentos"] = valor_investido
+    st.session_state["valor_investir"] = valor_investido
     return valor_investido
 
 def recomendacao_historica():
 
     st.markdown("""
-## Você deseja obter essa recomendação com base em:
+Você deseja obter essa recomendação com base em:
 
 - **Histórica** - Desde a criação do FII.  
 - **Anual** - O ano atual.
@@ -485,13 +659,13 @@ def recomendacao_historica():
     opcoes = ['Histórica', 'Anual', 'Mensal']
     historico = st.radio("Selecione o período desejado para obter a recomendação", opcoes)
     st.write(f'Você selecionou: {historico}')
-    st.session_state["segmentos"] = historico 
+    st.session_state["historico"] = historico 
     return historico
 
 
 def recomendacao_segmento():
     st.markdown("""
-## Selecione os segmentos dos FIIs a serem recomendados:
+Selecione os segmentos dos FIIs a serem recomendados:
 """)
     df = concatenacao_geral()
     df["Segmento_Atuacao"] = df["Segmento_Atuacao"].fillna("Outros")
@@ -509,7 +683,7 @@ def recomendacao_segmento():
 
 def recomendacao_quantidade():
     st.markdown("""
-## Selecione quantos FIIs deseja obter de recomendação:
+Selecione quantos FIIs deseja obter de recomendação:
 """)
     lista_qtde = [1, 2, 3, 4, 5]
 
@@ -678,9 +852,36 @@ def formatar_numero(valor):
         return f"{valor:.2f}"
     
 
+def llm_resumo(lista):
+    openai.api_key = api_key
+
+    prompt = f"""Você irá analisar o conteúdo a seguir, que consiste em um relatório gerencial de um fundo imobiliário, e deverá resumir as informações mais relevantes de forma clara e objetiva, sem usar listas. O objetivo é destacar os pontos principais, incluindo:
+    1. Os **objetivos estratégicos** do fundo, como metas de rentabilidade, diversificação e crescimento.
+    2. **Resultados financeiros atualizados** do mês, como rentabilidade, dividendos pagos e variação do patrimônio líquido.
+    3. **Indicadores de performance** importantes, como o rendimento por cota, a valorização das cotas e o comparativo com benchmarks do mercado.
+    4. **Principais investimentos e ativos do fundo**, incluindo a performance desses ativos no mês e quaisquer mudanças significativas na carteira.
+    5. **Gestão de riscos**: aspectos como a alavancagem utilizada, a exposição a diferentes setores e a diversificação geográfica ou de ativos.
+    6. **Perspectivas futuras** do fundo, incluindo estratégias planejadas para os próximos meses ou anos.
+    O resumo deve ser fluido, sem perder a objetividade, e cobrir todos esses pontos de forma integrada, destacando as informações mais relevantes para os investidores e stakeholders, sem simplesmente repetir os dados da lista. A lista com as informações a serem resumidas é a seguinte: {lista}
+"""
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Erro ao gerar análise: {str(e)}"
+
+
+
+
 
 def gerar_analise_fii(ticker, dividend_yield, patrimonio_liquido, valor_cota, cotistas, segmento):
-    openai.api_key
+    openai.api_key = api_key
     
     prompt = f"""Você é um analista financeiro especializado em Fundos Imobiliários (FIIs) do Brasil.
     Analise os dados abaixo e forneça insights valiosos sobre o FII em questão.
@@ -722,9 +923,6 @@ def inicializar_chat():
         st.session_state.openai_client = OpenAI(api_key=api_key)
 
 def chat_fii():
-    st.subheader("Chat com especialista virtual focado em FIIs")
-    st.write("Tire qualquer dúvida que tiver sobre qualquer tema voltado para o mercado brasileiro de fundos imobiliários, digite abaixo sua dúvida!")
-    
     inicializar_chat()
     
     for mensagem in st.session_state.mensagens:
@@ -764,17 +962,14 @@ def chat_fii():
             st.error(f"Erro ao gerar resposta: {str(e)}")
 
 
-
-
 def escolha_analise():
-    st.subheader("Com base nas suas preferências, as recomendações foram:")
     
+    st.markdown("### Com base nas suas escolhas, as recomendações são:")
+
     df = score_df()
 
     df_complemento = concatenacao_complement()
     df_complemento['Data_Referencia'] = pd.to_datetime(df_complemento['Data_Referencia'], dayfirst=True, format='mixed')
-    
-    st.write("Aqui estão os fundos imobiliários recomendados:")
     
     # CSS atualizado para exibir um card por linha
     st.markdown("""
@@ -978,7 +1173,7 @@ def escolha_analise():
             with row1_col2:
                 st.markdown(f"""
                 <div class="card">
-                    <div class="metric-label">Dividend Yield</div>
+                    <div class="metric-label">Dividend Yield Patrimonial</div>
                     <div class="metric-value">{round(dividend_yield, 2)}%</div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -1105,15 +1300,13 @@ def escolha_analise():
                 margin=dict(l=60, r=30, t=80, b=60)
             )
             
-            # Adicionar informação de hover personalizada
+            
             fig2.update_traces(
                 hovertemplate="<b>Data:</b> %{x|%B/%Y}<br>" +
                             "<b>Valor:</b> R$ %{y:.2f}<br>"
             )
             
-            # Adicionar os gráficos ao Streamlit
             st.plotly_chart(fig2, use_container_width=True)
-            st.write("testeeeeeeee")
 
             ########################### LLM ##################
             st.markdown("### Análise do FII")
@@ -1128,8 +1321,178 @@ def escolha_analise():
                     segmento_atuacao
                 )
                 st.markdown(analysis)
+                st.write("")
+                st.write("")
+                st.markdown("<hr>", unsafe_allow_html=True)
+                st.write("")
+                st.write("")
+                st.subheader("Resumo do relatório gerencial mais recente disponível")
+                ticker = str(st.session_state.ticker_escolhido).lower()  # Código do fundo imobiliário
+                diretorio_download = "data/downloads"
+                headless = True  # Executar navegador em modo headless
+                relatorio_textos = relatorio_gerencial(ticker, diretorio_download, headless)
+                st.write(llm_resumo(relatorio_textos))
+
+    st.markdown("<h3 style='text-align: center;'>🤖 Tire suas dúvidas com o Assistente Virtual!</h3>", unsafe_allow_html=True)
+    chat_fii()
 
     return st.session_state.ticker_escolhido
+
+def scrapping_relatorio(ticker):
+
+    url = f"https://www.fundsexplorer.com.br/funds/{ticker}"
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
+    }
+
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    links = soup.find_all('a', href=True)
+
+    data_atual = datetime.now()
+    ano = data_atual.year
+    mes = data_atual.month
+
+    def retroceder_mes(ano, mes):
+        """Retrocede um mês, ajustando o ano se necessário."""
+        if mes == 1:
+            mes = 12
+            ano -= 1
+        else:
+            mes -= 1
+        return ano, mes
+
+    relatorio_mais_recente = None
+    while not relatorio_mais_recente:
+        mes_ano = f"{mes:02d}/{ano}"
+
+        for link in links:
+            texto = link.get_text(strip=True).lower()
+            if 'gerencial' in texto and mes_ano in texto:
+                relatorio_mais_recente = link['href']
+                print(f"Relatório encontrado para: {mes_ano}")
+                break
+
+        ano, mes = retroceder_mes(ano, mes)
+    return relatorio_mais_recente
+
+def configurar_download_automatico(diretorio_download, headless=False):
+    chrome_options = Options()
+    
+    # Configurações para download automático
+    chrome_options.add_experimental_option('prefs', {
+        "download.default_directory": diretorio_download,
+        "download.prompt_for_download": False,
+        "download.directory_upgrade": True,
+        "plugins.always_open_pdf_externally": True,
+        "safebrowsing.enabled": True
+    })
+    
+    if headless:
+        chrome_options.add_argument('--headless=new')
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--window-size=1920,1080')
+    
+    return chrome_options
+
+def baixar_pdf_selenium(url, diretorio_download, headless=False):
+
+    diretorio_download = os.path.abspath(diretorio_download)
+    
+    if not os.path.exists(diretorio_download):
+        os.makedirs(diretorio_download)
+    
+    chrome_options = configurar_download_automatico(diretorio_download, headless)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), 
+                            options=chrome_options)
+    
+    try:
+        driver.get(url)
+        wait = WebDriverWait(driver, 10)
+        botao_download = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="icon"]/cr-icon')))
+        botao_download.click()
+        time.sleep(5)
+        print(f"Download iniciado. Verifique a pasta: {diretorio_download}")
+        
+    except Exception as e:
+        print(f"Erro ao fazer download: {e}")
+    
+    finally:
+        driver.quit()
+
+
+def ult():
+
+    downloads_path = "data/downloads"
+    arquivos = os.listdir(downloads_path)
+
+    lista = []
+
+    for arquivo in arquivos:
+        caminho_arquivo = os.path.join(downloads_path, arquivo)
+        if arquivo.lower().endswith(".pdf"):
+            try:
+                reader = PdfReader(caminho_arquivo)
+                for i, page in enumerate(reader.pages):
+                    print(f"--- Página {i + 1} do arquivo {arquivo} ---")
+                    texto = page.extract_text()
+                    lista.append(texto)
+            except Exception as e:
+                print(f"Erro ao processar o arquivo {arquivo}: {e}")
+
+    for arquivo in arquivos:
+        caminho_arquivo = os.path.join(downloads_path, arquivo)
+        try:
+            os.remove(caminho_arquivo)
+            print(f"Arquivo {arquivo} removido com sucesso.")
+        except Exception as e:
+            print(f"Erro ao excluir o arquivo {arquivo}: {e}")
+
+    return lista
+
+
+def relatorio_gerencial(ticker, diretorio_download, headless=False):
+    """
+    Função principal que integra as etapas de scraping, download e processamento
+    dos relatórios gerenciais de um fundo imobiliário.
+    
+    Args:
+        ticker (str): Código do fundo imobiliário.
+        diretorio_download (str): Diretório onde os relatórios serão baixados.
+        headless (bool): Se True, executa o navegador em modo headless.
+        
+    Returns:
+        list: Lista de textos extraídos dos PDFs baixados.
+    """
+    try:
+        print("Iniciando scraping para encontrar o relatório...")
+        url_relatorio = scrapping_relatorio(ticker)
+        if not url_relatorio:
+            print("Nenhum relatório encontrado.")
+            return None
+        
+        print(f"Link do relatório encontrado: {url_relatorio}")
+        
+        print("Iniciando download do relatório...")
+        baixar_pdf_selenium(url_relatorio, diretorio_download, headless)
+        
+        print("Processando PDFs baixados...")
+        textos_extraidos = ult()
+        
+        print("Processamento concluído.")
+        return textos_extraidos
+
+    except Exception as e:
+        print(f"Erro durante a execução: {e}")
+        return None
+
+
 
 ########################################################### APIS ##############################################################
 
@@ -1260,125 +1623,172 @@ def pagina_home():
     data()
 
 def pagina_metricas():
-    st.title("Análise exploratória dos dados")
+    st.markdown("<h1 style='text-align: center;'>📊 Explorando os Dados para Insights</h1>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
     analise_exploratoria_v1()
     st.write("")
+    st.markdown("<hr>", unsafe_allow_html=True)
+    explicacao()
+    st.write("")
+    st.markdown("<hr>", unsafe_allow_html=True)
     metrica_at_pas_v1(concatenacao_at_pas)
     st.write("")
+    st.markdown("<hr>", unsafe_allow_html=True)
     segmento_fiis(concatenacao_geral)
     st.write("")
+    st.markdown("<hr>", unsafe_allow_html=True)
     scatter_plot(concatenacao_complement)
     st.write("")
 
 
 def pagina_modelo_recomendacao():
-    st.title("Modelo de recomendação")
-    
-   # Inicialização das variáveis de estado
+
     if 'etapa' not in st.session_state:
         st.session_state.etapa = 0
-    if 'proximo_clicado' not in st.session_state:
-        st.session_state.proximo_clicado = False
-    
-    # Função para controlar o avanço de etapa
-    def avancar_etapa():
-        st.session_state.proximo_clicado = True
-        st.session_state.etapa += 1
 
-    # Função para resetar o estado do botão próximo
-    def reset_proximo():
-        st.session_state.proximo_clicado = False
 
-    # Etapa 1: Atualizar dados
+    def avancar_para_resumo():
+        st.session_state.etapa = 1
+
+    def finalizar():
+        st.session_state.etapa = 2
+
+
+    st.markdown("<h1 style='text-align: center;'>💰 Modelo de Recomendação para Fundos Imobiliários 💰</h1>", unsafe_allow_html=True)
+    st.write("")
+    st.write("")
+    st.markdown("<hr>", unsafe_allow_html=True) 
+    st.write("")
+    st.write("")
+
+
     if st.session_state.etapa == 0:
-        st.subheader("Etapa 1: Atualizando os dados")
-        atualizar_dados_scrapping()
-        st.write("Para avançar para a próxima etapa selecione a opção abaixo")
-        if st.button("Próximo", key='proximo_1', on_click=reset_proximo):
-            avancar_etapa()
+        # Etapa 1
+        with st.container():
+            st.markdown("## 🛠️ Etapa 1: Atualizando os dados")
+            st.info("Clique no botão abaixo para atualizar todo o conjunto de dados do modelo.")
+            atualizar_dados_scrapping()
+        st.write("")
+        st.write("")
+        st.markdown("<hr>", unsafe_allow_html=True) 
+        st.write("")
+        st.write("")
 
-    # Etapa 2: Escolha do perfil de investidor
-    elif st.session_state.etapa == 1:
-        st.subheader("Etapa 2: Escolha o perfil do investidor")
-        investidor = recomendacao_inicial_investidor()
-        if st.button("Próximo", key='proximo_2', on_click=reset_proximo):
-            st.session_state.investidor = investidor
-            avancar_etapa()
+        # Etapa 2
+        with st.container():
+            st.markdown("## 👤 Etapa 2: Escolha o perfil do investidor")
+            st.markdown("**Como você se classifica em relação a investimento em Fundos Imobiliários (FIIs)?**")
+            recomendacao_inicial_investidor()
+        st.write("")
+        st.write("")
+        st.markdown("<hr>", unsafe_allow_html=True) 
+        st.write("")
+        st.write("")
 
-    # Etapa 3: Inicializando recomendação
-    elif st.session_state.etapa == 2:
-        st.subheader("Etapa 3: Inicializando recomendação")
-        tipo_investidor = recomendacao_inicial()
-        if st.button("Próximo", key='proximo_3', on_click=reset_proximo):
-            st.session_state.tipo_investidor = tipo_investidor
-            avancar_etapa()
+        # Etapa 3
+        with st.container():
+            st.markdown("## 📊 Etapa 3: Inicializando recomendação")
+            recomendacao_inicial()
+        st.write("")
+        st.write("")
+        st.markdown("<hr>", unsafe_allow_html=True) 
+        st.write("")
+        st.write("")
 
-    # Etapa 4: Valor disposto a investir
-    elif st.session_state.etapa == 3:
-        st.subheader("Etapa 4: Valor disposto a investir")
-        valor = valor_disposto_investir()
-        if st.button("Próximo", key='proximo_4', on_click=reset_proximo):
-            st.session_state.valor_disposto = valor
-            avancar_etapa()
+        # Etapa 4
+        with st.container():
+            st.markdown("## 💵 Etapa 4: Valor disposto a investir")
+            valor_disposto_investir()
+        st.write("")
+        st.write("")
+        st.markdown("<hr>", unsafe_allow_html=True) 
+        st.write("")
+        st.write("")
 
-    # Etapa 5: Escolha do tipo de histórico
-    elif st.session_state.etapa == 4:
-        st.subheader("Etapa 5: Escolha o tipo de histórico")
-        historico = recomendacao_historica()
-        if st.button("Próximo", key='proximo_5', on_click=reset_proximo):
-            st.session_state.historico = historico
-            avancar_etapa()
+        # Etapa 5
+        with st.container():
+            st.markdown("## 🕒 Etapa 5: Escolha o tipo de histórico")
+            recomendacao_historica()
+        st.write("")
+        st.write("")
+        st.markdown("<hr>", unsafe_allow_html=True) 
+        st.write("")
+        st.write("")
 
-    # Etapa 6: Escolha do segmento
-    elif st.session_state.etapa == 5:
-        st.subheader("Etapa 6: Escolha o segmento")
-        segmentos = recomendacao_segmento()
-        if st.button("Próximo", key='proximo_6', on_click=reset_proximo):
-            st.session_state.segmentos = segmentos
-            avancar_etapa()
+        # Etapa 6
+        with st.container():
+            st.markdown("## 🏢 Etapa 6: Escolha o segmento")
+            recomendacao_segmento()
+        st.write("")
+        st.write("")
+        st.markdown("<hr>", unsafe_allow_html=True) 
+        st.write("")
+        st.write("")
 
-    # Etapa 7: Escolha da quantidade
-    elif st.session_state.etapa == 6:
-        st.subheader("Etapa 7: Escolha a quantidade")
-        quantidade = recomendacao_quantidade()
-        if st.button("Próximo", key='proximo_7', on_click=reset_proximo):
-            st.session_state.quantidade = quantidade
-            avancar_etapa()
+        # Etapa 7
+        with st.container():
+            st.markdown("## 🔢 Etapa 7: Escolha a quantidade")
+            recomendacao_quantidade()
+        st.write("")
+        st.write("")
+        st.markdown("<hr>", unsafe_allow_html=True) 
+        st.write("")
+        st.write("")
 
-    # Resumo das escolhas
-    elif st.session_state.etapa == 7:
-        st.subheader("Resumo das escolhas")
-        st.write("Perfil do investidor:", st.session_state.get('investidor', 'Não selecionado'))
-        st.write("Valor disposto a investir:", st.session_state.get('valor_disposto', 'Não selecionado'))
-        st.write("Tipo de histórico:", st.session_state.get('historico', 'Não selecionado'))
-        st.write("Segmentos selecionados:", st.session_state.get('segmentos', 'Não selecionado'))
-        st.write("Quantidade escolhida:", st.session_state.get('quantidade', 'Não selecionado'))
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            if st.button("Reiniciar"):
-                st.session_state.etapa = 0
-                st.session_state.proximo_clicado = False
-        
+        col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button("Finalizar"):
-                st.session_state.etapa = 8  # Avança para a última etapa
+            if st.button("Próximo ➡️"):
+                avancar_para_resumo()
 
-    # Mostrando as recomendações
-    elif st.session_state.etapa == 8:
-        ticker_escolhido = escolha_analise()
+    # Resumo das escolhas (etapa 1)
+    elif st.session_state.etapa == 1:
+        st.markdown("## 📝 Resumo das Escolhas:")
+        st.write("")
+        st.write("### 👤 **Perfil do investidor:**", st.session_state.get('investidor_inic_med_avan', 'Não selecionado'))
+        st.write("")
+        st.write("### 📊 **Tipo de investidor:**", st.session_state.get('investidor_conser_mod_arroj', 'Não selecionado'))
+        st.write("")
+        st.write("### 💵 **Valor disposto a investir:**", st.session_state.get('valor_investir', 'Não selecionado'))
+        st.write("")
+        st.write("### 🕒 **Tipo de histórico:**", st.session_state.get('historico', 'Não selecionado'))
+        st.write("")
+        st.write("### 🏢 **Segmentos selecionados:**", st.session_state.get('segmentos', 'Não selecionado'))
+        st.write("")
+        st.write("### 🔢 **Quantidade escolhida:**", st.session_state.get('quantidade', 'Não selecionado'))
+        st.write("")
+        st.success("Confira as escolhas feitas antes de finalizar")
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+
+
+        col1, col2, col3 = st.columns([1, 2, 1])  # Centraliza o botão
+        with col2:
+            if st.button("Finalizar ✅"):
+                finalizar()
+
+    # Etapa final
+    elif st.session_state.etapa == 2:
+        st.markdown("## 🎉 Etapa Final: Conclusão")
+        escolha_analise()
+
         
-    chat_fii()
 
 
 def pagina_apis():
-    st.title("Documentação API")
+    st.markdown("<h1 style='text-align: center;'> 🌐 Documentação API </h1>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
     endpoints_api()
 
 def pagina_download():
-    st.title("Download dos arquivos utilizados")
-    st.write("Gostou do projeto? Fique a vontade para realizar download dos dados como preferir!")
+    st.markdown("<h1 style='text-align: center;'> 💾 Download dos arquivos utilizados </h1>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.markdown("""
+    ### Gostou do projeto?  
+    📥 **Baixe os dados** utilizados no modelo e explore as informações como preferir!
+    """)
+    st.markdown("<hr>", unsafe_allow_html=True)
     datasets_download(concatenacao_at_pas, concatenacao_complement, concatenacao_geral)
 
 
@@ -1391,8 +1801,8 @@ def Main():
 
     if st.sidebar.button("Página Inicial"):
         st.session_state["pagina_selecionada"] = "Página Inicial"
-    if st.sidebar.button("Análise exploratória"):
-        st.session_state["pagina_selecionada"] = "Análise exploratória"
+    if st.sidebar.button("Insights"):
+        st.session_state["pagina_selecionada"] = "Insights"
     if st.sidebar.button("Modelo de recomendação"):
         st.session_state["pagina_selecionada"] = "Modelo de recomendação"
     if st.sidebar.button("Documentação API"):
@@ -1403,7 +1813,7 @@ def Main():
     # Navegação condicional com base no estado da sessão
     if st.session_state["pagina_selecionada"] == "Página Inicial":
         pagina_home()
-    elif st.session_state["pagina_selecionada"] == "Análise exploratória":
+    elif st.session_state["pagina_selecionada"] == "Insights":
         pagina_metricas()
     elif st.session_state["pagina_selecionada"] == "Modelo de recomendação":
         pagina_modelo_recomendacao()

@@ -2,7 +2,7 @@ Project Charter: Recomendação de Fundos Imobiliários FII's
 
 1. Escopo do Projeto
 
-    O projeto visa desenvolver uma aplicação que recomenda fundos imobiliários (FIIs) adequados para investidores brasileiros com pouca ou nenhuma experiência em investimentos. A aplicação utilizará um modelo de machine learning para analisar dados de FIIs e perfis de investidores, fornecendo recomendações personalizadas que maximizem o retorno sobre investimento (ROI) e otimizem o tempo gasto na tomada de decisões financeiras.
+    O projeto visa desenvolver uma aplicação que recomenda fundos imobiliários (FIIs) adequados para investidores brasileiros com pouca ou nenhuma experiência em investimentos. A aplicação utilizará um modelo LLM para analisar dados de FIIs e perfis de investidores, fornecendo recomendações personalizadas que maximizem o retorno sobre investimento (ROI) e otimizem o tempo gasto na tomada de decisões financeiras.
 
 2. Objetivos do Projeto
 
@@ -21,7 +21,7 @@ Project Charter: Recomendação de Fundos Imobiliários FII's
     Usuários Beta/Testers: Primeiros usuários que testarão a aplicação e fornecerão feedbacks para melhorias antes do lançamento oficial.
     Apoio Executivo: Patrocinadores ou líderes organizacionais que aprovam e financiam o projeto, assegurando o alinhamento com os objetivos estratégicos da organização.
 
-4. Como realizar a Recomendação de Fundos Imobiliários FII's
+4. Como realizar o ciclo de Recomendação de Fundos Imobiliários FII's
 
     4.1.
         O primeiro passo foi a automatização da coleta de dados através de WebScraping na página da CVM. Esse processo foi implementado para garantir que os dados mais recentes estejam disponíveis para o modelo de recomendação. A grande vantagem dessa abordagem é a interatividade proporcionada ao usuário, que pode atualizar os dados sempre que desejar. Isso garante que o modelo seja alimentado com as informações mais atuais, maximizando a precisão das recomendações. A integração do WebScraping permite que o usuário tenha controle sobre o momento da coleta, evitando que o modelo se baseie em dados desatualizados e assegurando um fluxo contínuo e preciso de informações.
@@ -39,15 +39,13 @@ Project Charter: Recomendação de Fundos Imobiliários FII's
             A visualização é crucial para identificar tendências e padrões. Gráficos, como histogramas, gráficos de dispersão, podem ajudar a revelar informações importantes que não são imediatamente óbvias em tabelas de dados. Essa abordagem facilita a identificação de comportamentos atípicos e a compreensão das relações entre variáveis.
 
         Extração de Insights: 
-            Além de simplesmente explorar os dados, é importante extrair insights que possam guiar o desenvolvimento do modelo de recomendação. Perguntas como "Quais FIIs apresentaram o melhor desempenho nos últimos anos?" ou "Quais características estão associadas aos FIIs de maior sucesso?" devem ser investigadas.
-
-        Com uma compreensão sólida e insights extraídos dos dados, poderá avançar para as próximas etapas do processo de recomendação, que incluem o desenvolvimento e a validação do modelo.
+            Além de simplesmente explorar os dados, é importante extrair insights que possam guiar o desenvolvimento do modelo de recomendação. Explicações de termos complexos e amplamente utilizados são de extrema importância.
 
     4.3.
         O terceiro passo foi o desenvolvimento de rotas de API para fornecer acesso programático aos dados coletados e processados. Essa etapa foi essencial para tornar os dados disponíveis de maneira flexível, permitindo que outros desenvolvedores e sistemas externos possam integrá-los conforme suas próprias necessidades. Com as rotas de API, os dados podem ser consumidos em diferentes formatos e integrados a diversas aplicações, seja para fins analíticos, de desenvolvimento de novas funcionalidades ou mesmo para personalizar o uso dos dados conforme o interesse de quem os acessa. Essa abordagem amplia o alcance do projeto, transformando-o em uma ferramenta versátil e adaptável a diferentes cenários e plataformas.
 
     4.4.
-        O quarto passo envolve a utilização dos dados coletados e disponibilizados. A recomendação utiliza técnicas de socre para identificar padrões e gerar recomendações baseadas nos dados históricos e no comportamento atual do mercado. Esse modelo é projetado para recomendar os melhores FIIs (Fundos Imobiliários) com base em critérios como desempenho passado, características de risco, e outros fatores relevantes. Ao utilizar os dados mais recentes e bem estruturados, o modelo consegue oferecer recomendações personalizadas e adaptadas ao perfil do investidor, potencializando os resultados e orientando as melhores decisões de investimento.
+        O quarto passo envolve a utilização dos dados coletados e disponibilizados. A recomendação utiliza técnicas de score para identificar padrões e gerar recomendações baseadas nos dados históricos e no comportamento atual do mercado. Esse modelo é projetado para recomendar os melhores FIIs (Fundos Imobiliários) com base em critérios como desempenho passado, características de risco, e outros fatores relevantes. Ao utilizar os dados mais recentes e bem estruturados, o modelo consegue oferecer recomendações personalizadas e adaptadas ao perfil do investidor, potencializando os resultados e orientando as melhores decisões de investimento.
 
     4.5. 
         O quinto passo, após calcular os scores dos fundos imobiliários (FIIs) com base nos critérios previamente estabelecidos, é desenvolver uma aplicação gráfica voltada para o usuário. Essa aplicação deve permitir a visualização dos FIIs de forma clara e intuitiva, oferecendo diversas opções de filtros e ferramentas de personalização. Dessa forma, o usuário poderá selecionar os investimentos que melhor atendam ao seu perfil, considerando fatores como estilo de investimento, capital disponível e outros critérios relevantes para sua tomada de decisão.
@@ -55,15 +53,29 @@ Project Charter: Recomendação de Fundos Imobiliários FII's
     4.6.
         O sexto passo consiste em integrar a LLM da OpenAI por meio de sua API. Essa integração permitirá que a aplicação gere um resumo detalhado das escolhas feitas pelo usuário, proporcionando uma visão clara e personalizada da decisão tomada. Além disso, durante todo o processo de seleção e recomendação, o usuário terá acesso a um chat interativo com a LLM, chamada de "Especialista Virtual". Essa funcionalidade oferecerá suporte para esclarecer dúvidas relacionadas a FIIs, tornando a experiência mais completa e informativa. A escolha de integrar a LLM da OpenAI via API foi motivada pelas limitações computacionais que enfrento atualmente. Essa abordagem permite utilizar o poder da LLM sem a necessidade de infraestrutura robusta ou recursos computacionais elevados. Além disso, a solução oferece resultados altamente satisfatórios, com respostas precisas e relevantes geradas pela LLM, atendendo plenamente às necessidades do projeto.
 
+    4.7.
+        O último passo é resolver um grande problema que além de poupar tempo, auxilia no entendimento geral. A extração dos relatório gerenciais, quando o usuário selecionar um FII, a partir do modelo de recomendação, obtemos o último relatório gerencial disponibilizado via WebScrapping. A partir disso o integramos com a LLM, para que além de colocar em um formato mais descomplicado, mantém as informações cruciais para análise do fundo em questão.
+
+5. Finalização do projeto
+
+    Com base em todas as etapas desenvolvidas ao longo do projeto, conseguimos atingir os objetivos e o escopo previamente definidos de maneira bem-sucedida. A interface resultante é agradável, funcional e cuidadosamente projetada para priorizar a simplicidade, garantindo uma experiência acessível e intuitiva.
+    Nosso principal foco foi criar uma ferramenta que atendesse investidores de diferentes perfis, desde iniciantes até mais experientes, permitindo que eles compreendam de forma clara e direta as principais métricas e valores amplamente utilizados e discutidos no universo de investimentos.
+    A solução final não apenas facilita o entendimento desses indicadores, mas também contribui para a tomada de decisões mais informadas, promovendo maior confiança e assertividade no processo de análise.
+
 
 
 Data Summary Report: Recomendação de Fundos Imobiliários FII's
 
 1. Fontes de Dados:
 
+    1.1.
     Comissão de Valores Mobiliários (CVM):
         Tipo de Dados: Dados financeiros e regulatórios de fundos imobiliários, incluindo informações sobre rendimentos, volatilidade, liquidez, perfil de risco, patrimônio líquido, e histórico de desempenho.
         Objetivo de Uso: Os dados da CVM serão utilizados para alimentar o modelo de recomendação com informações precisas e atualizadas sobre os fundos imobiliários disponíveis no mercado. Esses dados ajudarão a criar perfis detalhados dos FIIs, que serão comparados com os perfis dos investidores para gerar recomendações personalizadas.
+
+    1.2.
+    Funds Explorer:
+        A partir do Funds Explorer que é um local que reune os mais diversos relatórios gerenciais disponibilizados, extraímos o relatório mais recente e realizamos um resumo com LLM, que primeiramente baixa o arquivo PDF, faz a extração do seu conteúdo e por fim é realizado a sumarização.
 
 2. Estrutura de Armazenamento
 

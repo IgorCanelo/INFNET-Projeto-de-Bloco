@@ -10,3 +10,5 @@ scikit-learn
 openpyxl
 yfinance
 openai
+certifi
+PyPDF2
