@@ -765,7 +765,7 @@ def score_df():
     metrica_1["Segmento_Atuacao"] = metrica_1["Segmento_Atuacao"].fillna("Outros")
  
     # Filtrando o DF com base nas escolhas do usuário
-    perfil_investidor = st.session_state.get('tipo_investidor')
+    perfil_investidor = st.session_state.get('investidor_conser_mod_arroj')
     if perfil_investidor == "Conservador":
         metrica_1 = metrica_1[["CNPJ_Fundo", "Data_Referencia", "TICKER", "Segmento_Atuacao", "score1_conservador"]]
         metrica_1 = metrica_1.sort_values(by="score1_conservador", ascending=False)
@@ -824,7 +824,7 @@ def score_df():
 
 
     # Filtrando o DF com base no valor que o usuário está disposto a investir
-    valor_disposto = st.session_state.get('valor_disposto')
+    valor_disposto = st.session_state.get('valor_investir')
     if valor_disposto == "R$0,00 a R$90,00":
         metrica_1 = metrica_1[metrica_1['cotacao'] <= 90.00]
 
